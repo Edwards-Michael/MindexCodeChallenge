@@ -29,7 +29,16 @@ namespace challenge.Repositories
 
         public Employee GetById(string id)
         {
-            return _employeeContext.Employees.SingleOrDefault(e => e.EmployeeId == id);
+            Employee employee = _employeeContext.Employees.SingleOrDefault(e => e.EmployeeId == id);
+            
+            if (employee != null)
+            {
+                //Only get direct report employeeIds, otherwise it turns into reporting structure.
+                List<Employee> directReports = _employeeContext.Employees.Where(e => e.EmployeeId.Equals(id)).SelectMany(dr => dr.DirectReports).Select(dr => new Employee() { EmployeeId = dr.EmployeeId }).ToList();
+                employee.DirectReports = directReports.Count == 0 ? null : directReports;
+            }
+            
+            return employee;
         }
 
         public Task SaveAsync()

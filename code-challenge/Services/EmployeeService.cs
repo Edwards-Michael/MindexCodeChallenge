@@ -44,6 +44,8 @@ namespace challenge.Services
         {
             if(originalEmployee != null)
             {
+                // ensure direct report employees are not removed
+                originalEmployee.DirectReports = null;
                 _employeeRepository.Remove(originalEmployee);
                 if (newEmployee != null)
                 {
